@@ -39,7 +39,7 @@ jobs:
     name: Push Docker image to Docker Hub
     needs:
       - release-please
-    if: needs.release-please.outputs.release_created || github.event_name == 'workflow_dispatch'
+    if: ${{ ! cancelled() && needs.release-please.outputs.release_created || github.event_name == 'workflow_dispatch' }}
     runs-on: ubuntu-latest
     steps:
       - name: Check out the repo
