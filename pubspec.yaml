@@ -7,7 +7,7 @@ dependencies:
   dartnissanconnect:
     git:
       url: https://github.com/kamiKAC/dartnissanconnect
-      ref: v1.0.4
+      ref: v1.0.5
   dartcarwings:
     git: https://github.com/Tobiaswk/dartcarwings
   mqtt_client: ^9.6.1
