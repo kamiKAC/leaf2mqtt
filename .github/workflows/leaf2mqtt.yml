@@ -64,9 +64,9 @@ jobs:
         with:
           images: ${{ secrets.DOCKERHUBUSERNAME }}/leaf2mqtt
           tags: |
-            type=raw,value=${{ needs.release-please.outputs.tag_name }},enable={{is_default_branch}}
-            type=raw,value=latest,enable={{is_default_branch}}
-            type=raw,value=edge,enable={{is_default_branch == 'false'}}
+            type=raw,value=${{ needs.release-please.outputs.tag_name }},enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
+            type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
+            type=raw,value=edge,enable${{ github.ref != format('refs/heads/{0}', 'main') }}
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v2
