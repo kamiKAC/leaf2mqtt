@@ -13,6 +13,7 @@ on:
 
 jobs:
   release-please:
+    if: github.event_name != 'workflow_dispatch'
     runs-on: ubuntu-latest
     steps:
       - uses: googleapis/release-please-action@v4
@@ -42,7 +43,7 @@ jobs:
     name: Push Docker image to Docker Hub
     needs:
       - release-please
-    if: needs.release-please.outputs.release_created
+    if: needs.release-please.outputs.release_created || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     steps:
       - name: Check out the repo
@@ -66,8 +67,9 @@ jobs:
         with:
           images: ${{ secrets.DOCKERHUBUSERNAME }}/leaf2mqtt
           tags: |
-            type=raw,value=${{ needs.release-please.outputs.tag_name }}
-            type=raw,value=latest
+            type=raw,value=${{ needs.release-please.outputs.tag_name }},enable={{is_default_branch}}
+            type=raw,value=latest,enable={{is_default_branch}}
+            type=raw,value=edge,enable={{is_default_branch == 'false'}}
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v2
@@ -82,6 +84,7 @@ jobs:
     needs:
       - release-please
       - push_to_registry
+    if: github.event_name != 'workflow_dispatch'
     runs-on: ubuntu-latest
     permissions:
       contents: write
