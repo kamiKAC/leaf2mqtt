@@ -80,7 +80,7 @@ jobs:
     needs:
       - release-please
       - push_to_registry
-    if: github.event_name != 'workflow_dispatch'
+    if: ${{ ! cancelled() && github.event_name != 'workflow_dispatch' }}
     runs-on: ubuntu-latest
     permissions:
       contents: write
