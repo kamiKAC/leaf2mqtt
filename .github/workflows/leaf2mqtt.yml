@@ -12,8 +12,37 @@ on:
       - main
 
 jobs:
+  release-please:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: googleapis/release-please-action@v4
+        id: release
+        with:
+          release-type: dart
+          token: ${{ secrets.GH_TOKEN }}
+      - uses: actions/checkout@v4
+      - name: tag major and minor versions
+        if: ${{ steps.release.outputs.release_created }}
+        run: |
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git config --global  url."https://${{ secrets.GH_TOKEN }}@github.com/".insteadOf "https://github.com/"
+          git tag -d v${{ steps.release.outputs.major }} || true
+          git tag -d v${{ steps.release.outputs.major }}.${{ steps.release.outputs.minor }} || true
+          git push origin :v${{ steps.release.outputs.major }} || true
+          git push origin :v${{ steps.release.outputs.major }}.${{ steps.release.outputs.minor }} || true
+          git tag -a v${{ steps.release.outputs.major }} -m "Release v${{ steps.release.outputs.major }}"
+          git tag -a v${{ steps.release.outputs.major }}.${{ steps.release.outputs.minor }} -m "Release v${{ steps.release.outputs.major }}.${{ steps.release.outputs.minor }}"
+          git push origin v${{ steps.release.outputs.major }}
+          git push origin v${{ steps.release.outputs.major }}.${{ steps.release.outputs.minor }}
+    outputs:
+      release_created: ${{ steps.release.outputs.release_created }}
+      tag_name: ${{ steps.release.outputs.tag_name }}
   push_to_registry:
     name: Push Docker image to Docker Hub
+    needs:
+      - release-please
+    if: needs.release-please.outputs.release_created
     runs-on: ubuntu-latest
     steps:
       - name: Check out the repo
@@ -37,7 +66,7 @@ jobs:
         with:
           images: ${{ secrets.DOCKERHUBUSERNAME }}/leaf2mqtt
           tags: |
-            type=raw,value=${{ github.run_number }}
+            type=raw,value=${{ needs.release-please.outputs.tag_name }}
             type=raw,value=latest
 
       - name: Build and push Docker image
@@ -50,7 +79,9 @@ jobs:
 
   update_addon:
     name: Update Home Assistant add-on
-    needs: push_to_registry
+    needs:
+      - release-please
+      - push_to_registry
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -63,7 +94,7 @@ jobs:
         with:
           file: addon/config.json
           field: version
-          value: ${{ github.run_number }}
+          value: ${{ needs.release-please.outputs.tag_name }}
 
       - name: Commit changes
         uses: stefanzweifel/git-auto-commit-action@v4
