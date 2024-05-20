@@ -17,12 +17,13 @@ jobs:
           release-type: dart
           token: ${{ secrets.GH_TOKEN }}
       - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GH_TOKEN }}
       - name: tag major and minor versions
         if: ${{ steps.release.outputs.release_created }}
         run: |
           git config user.name github-actions[bot]
           git config user.email 41898282+github-actions[bot]@users.noreply.github.com
-          git config --global  url."https://${{ secrets.GH_TOKEN }}@github.com/".insteadOf "https://github.com/"
           git tag -d v${{ steps.release.outputs.major }} || true
           git tag -d v${{ steps.release.outputs.major }}.${{ steps.release.outputs.minor }} || true
           git push origin :v${{ steps.release.outputs.major }} || true
