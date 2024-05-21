@@ -1,0 +1,10 @@
+{
+  ".": "0.0.3",
+  "extra-files": [
+    {
+      "type": "json",
+      "path": "addon/config.json",
+      "jsonpath": "$.version"
+    }
+  ]
+}
