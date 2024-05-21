@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.3](https://github.com/kamiKAC/leaf2mqtt/compare/v0.0.2...v0.0.3) (2024-05-21)
+
+
+### Bug Fixes
+
+* update to dartnissanconnect v1.0.5 ([#14](https://github.com/kamiKAC/leaf2mqtt/issues/14)) ([1d2315e](https://github.com/kamiKAC/leaf2mqtt/commit/1d2315ee762b6a764c6c203553e7fd40806b34c3))
+
 ## [0.0.2](https://github.com/kamiKAC/leaf2mqtt/compare/v0.0.2...v0.0.2) (2024-05-20)
 
 
