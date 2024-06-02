@@ -288,7 +288,7 @@ Future<void> fetchAndPublishAllStatus(MqttClientWrapper mqttClient, String vin) 
   final DateTime targetDate = DateTime.now();
   return Future.wait(<Future<void>> [
     Future<void>(() => mqttClient.publishStates(
-      _session.executeSync((Vehicle vehicle) => vehicle.getVehicleStatus(), vin, targetDate))),
+      _session.executeSync((Vehicle vehicle) => vehicle.getVehicleStatus(), vin))),
     fetchAndPublishDailyStats(mqttClient, vin, targetDate),
     fetchAndPublishMonthlyStats(mqttClient, vin, targetDate),
     fetchAndPublishBatteryStatus(mqttClient, vin),
