@@ -136,6 +136,7 @@ void subscribeToCommands(MqttClientWrapper mqttClient, String vin) {
       switch (payload) {
         case 'update':
             fetchAndPublishStatus(mqttClient, vin);
+          break;
         case 'updateall':
             fetchAndPublishAllStatus(mqttClient, vin);
           break;
