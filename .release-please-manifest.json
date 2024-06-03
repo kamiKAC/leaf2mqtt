@@ -5,6 +5,10 @@
       "type": "json",
       "path": "addon/config.json",
       "jsonpath": "$.version"
+    },
+    {
+      "type": "generic",
+      "path": "src/leaf_2_mqtt.dart"
     }
   ]
 }
