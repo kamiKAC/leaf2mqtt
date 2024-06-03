@@ -2,10 +2,17 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:logging/logging.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 import 'leaf/leaf_session.dart';
 import 'leaf/leaf_vehicle.dart';
 import 'mqtt_client_wrapper.dart';
+
+PackageInfo packageInfo = await PackageInfo.fromPlatform();
+String appName = packageInfo.appName;
+String packageName = packageInfo.packageName;
+String version = packageInfo.version;
+String buildNumber = packageInfo.buildNumber;
 
 LeafSession _session;
 int _commandAttempts = 2;
@@ -30,7 +37,7 @@ Future<void> main() async {
     print('${record.level.name}: ${record.time}: ${record.loggerName}: ${record.message}');
   });
 
-  _log.info('V0.11');
+  _log.info('$appName ver: $version ($buildNumber)');
 
   final String leafUser = envVars['LEAF_USERNAME'];
   final String leafPassword = envVars['LEAF_PASSWORD'];
