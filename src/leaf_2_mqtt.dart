@@ -2,14 +2,10 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:logging/logging.dart';
-import 'package:pubspec_parse/pubspec_parse.dart';
 
 import 'leaf/leaf_session.dart';
 import 'leaf/leaf_vehicle.dart';
 import 'mqtt_client_wrapper.dart';
-
-final pubSpecFile = File('pubspec.yaml').readAsStringSync();
-final pubSpec = Pubspec.parse(pubSpecFile);
 
 LeafSession _session;
 int _commandAttempts = 2;
@@ -34,7 +30,7 @@ Future<void> main() async {
     print('${record.level.name}: ${record.time}: ${record.loggerName}: ${record.message}');
   });
 
-  _log.info(pubSpec.name + ' ver: '+ pubSpec.version);
+  _log.info('V0.11');
 
   final String leafUser = envVars['LEAF_USERNAME'];
   final String leafPassword = envVars['LEAF_PASSWORD'];
