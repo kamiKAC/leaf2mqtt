@@ -9,6 +9,8 @@ import 'mqtt_client_wrapper.dart';
 
 LeafSession _session;
 int _commandAttempts = 2;
+const appVersion = String.fromEnvironment('APP_VERSION', defaultValue: 'unknown');
+
 final Logger _log = Logger('main');
 
 Future<void> main() async {
@@ -30,7 +32,7 @@ Future<void> main() async {
     print('${record.level.name}: ${record.time}: ${record.loggerName}: ${record.message}');
   });
 
-  _log.info('V0.11');
+  _log.info('Version: ${AppVersion}');
 
   final String leafUser = envVars['LEAF_USERNAME'];
   final String leafPassword = envVars['LEAF_PASSWORD'];
