@@ -110,7 +110,7 @@ Future<void> startUpdateLoop(MqttClientWrapper mqttClient, String vin) async {
   subscribeToCommands(mqttClient, vin);
 
   while (true) {
-    await fetchAndPublishStatus(mqttClient, vin);
+    await fetchAndPublishAllStatus(mqttClient, vin);
 
     int calculatedUpdateIntervalMinutes = updateIntervalMinutes;
     if ((_session.executeSync((Vehicle vehicle) => vehicle.isCharging, vin) ?? false) &&
@@ -137,9 +137,6 @@ void subscribeToCommands(MqttClientWrapper mqttClient, String vin) {
   subscribe('command', (String payload) {
       switch (payload) {
         case 'update':
-            fetchAndPublishStatus(mqttClient, vin);
-          break;
-        case 'updateall':
             fetchAndPublishAllStatus(mqttClient, vin);
           break;
         default:
@@ -272,27 +269,11 @@ Future<void> fetchAndPublishCockpitStatus(MqttClientWrapper mqttClient, String v
            vehicle.fetchCockpitStatus(), vin).then(mqttClient.publishStates);
 }
 
-Future<void> fetchAndPublishStatus(MqttClientWrapper mqttClient, String vin) {
-  _log.finer('fetchAndPublishAllStatus for $vin');
-  return Future.wait(<Future<void>> [
-    Future<void>(() => mqttClient.publishStates(
-      _session.executeSync((Vehicle vehicle) => vehicle.getVehicleStatus(), vin))),
-    fetchAndPublishBatteryStatus(mqttClient, vin),
-    fetchAndPublishCockpitStatus(mqttClient, vin),
-    fetchAndPublishClimateStatus(mqttClient, vin),
-    fetchAndPublishLocation(mqttClient, vin)
-
-  ]);
-}
-
 Future<void> fetchAndPublishAllStatus(MqttClientWrapper mqttClient, String vin) {
   _log.finer('fetchAndPublishAllStatus for $vin');
-  final DateTime targetDate = DateTime.now();
   return Future.wait(<Future<void>> [
     Future<void>(() => mqttClient.publishStates(
       _session.executeSync((Vehicle vehicle) => vehicle.getVehicleStatus(), vin))),
-    fetchAndPublishDailyStats(mqttClient, vin, targetDate),
-    fetchAndPublishMonthlyStats(mqttClient, vin, targetDate),
     fetchAndPublishBatteryStatus(mqttClient, vin),
     fetchAndPublishCockpitStatus(mqttClient, vin),
     fetchAndPublishClimateStatus(mqttClient, vin),
