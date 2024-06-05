@@ -74,6 +74,7 @@ jobs:
           else
             echo "Nearest tag not found, using 'edge' tag"
             echo "nearest_tag=edge" >> $GITHUB_OUTPUT
+          fi
       - name: Extract metadata (tags, labels) for Docker
         id: meta
         uses: docker/metadata-action@v5
