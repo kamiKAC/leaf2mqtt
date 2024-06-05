@@ -85,12 +85,6 @@ jobs:
             type=raw,value=${{ needs.release-please.outputs.tag_name }},enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
             type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
             type=raw,value=${{ steps.get-nearest-tag.outputs.nearest_tag  }},enable=${{ github.ref != format('refs/heads/{0}', 'main') }}
-      - name: Show metadata
-        shell: bash
-        run: |-
-          echo "JSON: ${{ fromJSON(steps.meta.outputs.json)}}"
-          echo "tags: ${{ steps.meta.outputs.tags }}"
-          echo "version: ${{ steps.meta.outputs.version }}"
       - name: Build and push Docker image
         uses: docker/build-push-action@v2
         with:
