@@ -16,15 +16,15 @@ final Logger _log = Logger('main');
 Future<void> main() async {
   final Map<String, String> envVars = Platform.environment;
 
-  final String logLevelStr = envVars['LOG_LEVEL'] ?? '${Level.WARNING}';
+  final String logLevelStr = envVars['LOG_LEVEL'] ?? '${Level.INFO}';
   Level logLevel =
     Level.LEVELS.firstWhere(
       (Level level) => level.name.toLowerCase() == logLevelStr.toLowerCase(),
       orElse: () => null);
 
   if (logLevel == null) {
-    print('LOG_LEVEL environment variable should be set to a valid value from: ${Level.LEVELS}. Defaulting to Warning.');
-    logLevel = Level.WARNING;
+    print('LOG_LEVEL environment variable should be set to a valid value from: ${Level.LEVELS}. Defaulting to Info.');
+    logLevel = Level.INFO;
   }
 
   Logger.root.level = logLevel;
@@ -32,7 +32,7 @@ Future<void> main() async {
     print('${record.level.name}: ${record.time}: ${record.loggerName}: ${record.message}');
   });
 
-  _log.info('Version: ${AppVersion}');
+  _log.info('Version: ${appVersion}');
 
   final String leafUser = envVars['LEAF_USERNAME'];
   final String leafPassword = envVars['LEAF_PASSWORD'];

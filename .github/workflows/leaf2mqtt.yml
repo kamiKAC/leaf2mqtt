@@ -56,7 +56,21 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUBUSERNAME }}
           password: ${{ secrets.DOCKERHUBACCESSTOKEN }}
-
+      
+      - name: Get nearest tag
+        id: get-nearest-tag
+        if: ${{ github.ref != format('refs/heads/{0}', 'main') }}
+        run: |
+          TAGS=$(git tag --list)
+          NEAREST_TAG=$(git describe --tags --abbrev=0)
+          SPECIFIC_TAG=$(git tag --points-at $(git rev-list -n 1 $NEAREST_TAG) | grep -E 'v[0-9]+\.[0-9]+\.[0-9]+')
+          if [[ ! -z "$SPECIFIC_TAG" ]]; then
+            echo "Nearest tag is: $SPECIFIC_TAG"
+            echo "Using tag ${SPECIFIC_TAG}-edge"
+            echo "nearest_tag=${SPECIFIC_TAG}-edge" >> $GITHUB_OUTPUT
+          else
+            echo "Nearest tag not found, using 'edge' tag"
+            echo "nearest_tag=edge" >> $GITHUB_OUTPUT
       - name: Extract metadata (tags, labels) for Docker
         id: meta
         uses: docker/metadata-action@v5
@@ -65,7 +79,7 @@ jobs:
           tags: |
             type=raw,value=${{ needs.release-please.outputs.tag_name }},enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
             type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
-            type=raw,value=edge,enable=${{ github.ref != format('refs/heads/{0}', 'main') }}
+            type=raw,value=${{ steps.get-nearest-tag.outputs.nearest_tag  }},enable=${{ github.ref != format('refs/heads/{0}', 'main') }}
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v2
