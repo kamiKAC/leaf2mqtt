@@ -9,6 +9,7 @@ dependencies:
       url: https://github.com/kamiKAC/dartnissanconnect
       ref: v1.0.5
   dartcarwings:
+    git:
       url: https://github.com/kamiKAC/dartcarwings
       ref: fix/use-new-base-url
   mqtt_client: ^9.6.1
