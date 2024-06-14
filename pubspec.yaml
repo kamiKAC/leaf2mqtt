@@ -11,7 +11,7 @@ dependencies:
   dartcarwings:
     git:
       url: https://github.com/kamiKAC/dartcarwings
-      ref: fix/use-new-base-url
+      ref: v1.0.1
   mqtt_client: ^9.6.1
   logging: ^1.0.1
 environment:
