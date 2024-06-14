@@ -1,4 +1,5 @@
-![Docker Pulls](https://img.shields.io/docker/pulls/kamikac/leaf2mqtt) ![Docker Image Version (latest by date)](https://img.shields.io/docker/v/kamikac/leaf2mqtt)
+![Docker Pulls](https://img.shields.io/docker/pulls/kamikac/leaf2mqtt) ![Docker Image Version (latest by date)](https://img.shields.io/docker/v/kamikac/leaf2mqtt) ![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/kamiKAC/leaf2mqtt/leaf2mqtt.yml)
+
 # leaf2mqtt
 > :warning: olderCanada and olderUSA support may break at anytime because Nissan keep changing the API key. Thank you Nissan for working against your customers.
 
