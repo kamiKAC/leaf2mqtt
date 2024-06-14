@@ -43,20 +43,39 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out the repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
+        with:
+          fetch-tags: true
+          fetch-depth: 200
 
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@v1
+        uses: docker/setup-qemu-action@v3
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
+        uses: docker/setup-buildx-action@v3
 
       - name: Log in to Docker Hub
-        uses: docker/login-action@v1.10.0
+        uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUBUSERNAME }}
           password: ${{ secrets.DOCKERHUBACCESSTOKEN }}
-
+      
+      - name: Get nearest tag
+        id: get-nearest-tag
+        if: ${{ github.ref != format('refs/heads/{0}', 'main') }}
+        shell: bash
+        run: |-
+          TAGS=$(git tag --list)
+          NEAREST_TAG=$(git describe --tags --abbrev=0)
+          SPECIFIC_TAG=$(git tag --points-at $(git rev-list -n 1 $NEAREST_TAG) | grep -E 'v[0-9]+\.[0-9]+\.[0-9]+')
+          if [[ ! -z "$SPECIFIC_TAG" ]]; then
+            echo "Nearest tag is: $SPECIFIC_TAG"
+            echo "Using tag ${SPECIFIC_TAG}-edge"
+            echo "nearest_tag=${SPECIFIC_TAG}-edge" >> $GITHUB_OUTPUT
+          else
+            echo "Nearest tag not found, using 'edge' tag"
+            echo "nearest_tag=edge" >> $GITHUB_OUTPUT
+          fi
       - name: Extract metadata (tags, labels) for Docker
         id: meta
         uses: docker/metadata-action@v5
@@ -65,12 +84,13 @@ jobs:
           tags: |
             type=raw,value=${{ needs.release-please.outputs.tag_name }},enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
             type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
-            type=raw,value=edge,enable=${{ github.ref != format('refs/heads/{0}', 'main') }}
-
+            type=raw,value=${{ steps.get-nearest-tag.outputs.nearest_tag  }},enable=${{ github.ref != format('refs/heads/{0}', 'main') }}
       - name: Build and push Docker image
-        uses: docker/build-push-action@v2
+        uses: docker/build-push-action@v5
         with:
           context: .
+          build-args: |
+            APP_VERSION=${{ steps.meta.outputs.version }}
           push: true
           platforms: linux/amd64,linux/arm64,linux/arm/v8
           tags: ${{ steps.meta.outputs.tags }}
