@@ -14,7 +14,6 @@ jobs:
       - uses: googleapis/release-please-action@v4
         id: release
         with:
-          release-type: dart
           token: ${{ secrets.GH_TOKEN }}
       - uses: actions/checkout@v4
         with:
