@@ -1,14 +1,5 @@
 # Changelog
 
-## [0.0.4](https://github.com/kamiKAC/leaf2mqtt/compare/v0.0.3...v0.0.4) (2024-06-14)
-
-
-### Bug Fixes
-
-* reorder of status fetch ([#21](https://github.com/kamiKAC/leaf2mqtt/issues/21)) ([d19c52c](https://github.com/kamiKAC/leaf2mqtt/commit/d19c52ce5766015c1568115a930b3eb44d88d073))
-* switch to dartcarwings v1.0.1 (solves [#19](https://github.com/kamiKAC/leaf2mqtt/issues/19)) ([d19c52c](https://github.com/kamiKAC/leaf2mqtt/commit/d19c52ce5766015c1568115a930b3eb44d88d073))
-* use build argument as version source - this enables displaying version of app in logs ([d19c52c](https://github.com/kamiKAC/leaf2mqtt/commit/d19c52ce5766015c1568115a930b3eb44d88d073))
-
 ## [0.0.3](https://github.com/kamiKAC/leaf2mqtt/compare/v0.0.2...v0.0.3) (2024-05-21)
 
 
