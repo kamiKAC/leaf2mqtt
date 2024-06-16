@@ -1,9 +1,13 @@
 {
-    "extra-files": [
-    {
-      "type": "json",
-      "path": "addon/config.json",
-      "jsonpath": "$.version"
+  "packages": {
+    ".": {
+      "extra-files": [
+        {
+          "type": "json",
+          "path": "addon/config.json",
+          "jsonpath": "$.version"
+        }
+      ]
     }
-  ]
+  }
 }
