@@ -9,22 +9,20 @@ import 'mqtt_client_wrapper.dart';
 
 LeafSession _session;
 int _commandAttempts = 2;
-const appVersion = String.fromEnvironment('APP_VERSION', defaultValue: 'unknown');
-
 final Logger _log = Logger('main');
 
 Future<void> main() async {
   final Map<String, String> envVars = Platform.environment;
 
-  final String logLevelStr = envVars['LOG_LEVEL'] ?? '${Level.INFO}';
+  final String logLevelStr = envVars['LOG_LEVEL'] ?? '${Level.WARNING}';
   Level logLevel =
     Level.LEVELS.firstWhere(
       (Level level) => level.name.toLowerCase() == logLevelStr.toLowerCase(),
       orElse: () => null);
 
   if (logLevel == null) {
-    print('LOG_LEVEL environment variable should be set to a valid value from: ${Level.LEVELS}. Defaulting to Info.');
-    logLevel = Level.INFO;
+    print('LOG_LEVEL environment variable should be set to a valid value from: ${Level.LEVELS}. Defaulting to Warning.');
+    logLevel = Level.WARNING;
   }
 
   Logger.root.level = logLevel;
@@ -32,7 +30,7 @@ Future<void> main() async {
     print('${record.level.name}: ${record.time}: ${record.loggerName}: ${record.message}');
   });
 
-  _log.info('Version: ${appVersion}');
+  _log.info('V0.11');
 
   final String leafUser = envVars['LEAF_USERNAME'];
   final String leafPassword = envVars['LEAF_PASSWORD'];
@@ -275,10 +273,9 @@ Future<void> fetchAndPublishAllStatus(MqttClientWrapper mqttClient, String vin) 
     Future<void>(() => mqttClient.publishStates(
       _session.executeSync((Vehicle vehicle) => vehicle.getVehicleStatus(), vin))),
     fetchAndPublishBatteryStatus(mqttClient, vin),
-    fetchAndPublishCockpitStatus(mqttClient, vin),
     fetchAndPublishClimateStatus(mqttClient, vin),
-    fetchAndPublishLocation(mqttClient, vin)
-
+    fetchAndPublishLocation(mqttClient, vin),
+    fetchAndPublishCockpitStatus(mqttClient, vin)
   ]);
 }
 
