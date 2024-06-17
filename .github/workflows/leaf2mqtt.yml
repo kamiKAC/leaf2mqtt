@@ -20,13 +20,9 @@ jobs:
     steps:
       - uses: googleapis/release-please-action@v4
         id: release
-        with:
-          token: ${{ secrets.GH_TOKEN }}
       - uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.GH_TOKEN }}
       - name: tag major and minor versions
-        if: ${{ steps.release.outputs.release_created }}
+        if: steps.release.outputs.release_created
         run: |
           git config user.name github-actions[bot]
           git config user.email 41898282+github-actions[bot]@users.noreply.github.com
@@ -38,6 +34,34 @@ jobs:
           git tag -a v${{ steps.release.outputs.major }}.${{ steps.release.outputs.minor }} -m "Release v${{ steps.release.outputs.major }}.${{ steps.release.outputs.minor }}"
           git push origin v${{ steps.release.outputs.major }}
           git push origin v${{ steps.release.outputs.major }}.${{ steps.release.outputs.minor }}
+      - name: display pr output
+        if: steps.release.outputs.prs_created == 'true'
+        run: |-
+          echo 'pr output: ${{ steps.release.outputs.pr }}'
+          echo 'prs output: ${{ steps.release.outputs.prs }}'
+      - name: install yq
+        if: steps.release.outputs.prs_created == 'true'
+        uses: chrisdickinson/setup-yq@v1.0.1
+        with:
+          yq-version: v4.44.2
+      - name: checkout release-please branch
+        if: steps.release.outputs.prs_created == 'true'
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ fromJson(steps.release.outputs.pr).headBranchName }}
+      - name: update addon version
+        if: steps.release.outputs.prs_created == 'true'
+        run: |-
+          version=$(yq  '.version' ./pubspec.yaml)
+          yq -i ".version |= \"v${version}\"" addon/config.json
+          git add .
+          if [[ ! -z "$(git status --porcelain)" ]]; then
+            git config user.name github-actions[bot]
+            git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+            git commit -m "Update addon version"
+            git push
+          fi
+
     outputs:
       release_created: ${{ steps.release.outputs.release_created }}
       tag_name: ${{ steps.release.outputs.tag_name }}
