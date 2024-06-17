@@ -8,7 +8,8 @@
   "init": false,
   "arch": [
     "aarch64",
-    "amd64"
+    "amd64",
+    "armhf"
   ],
   "options": {
     "LEAF_USERNAME": "",
