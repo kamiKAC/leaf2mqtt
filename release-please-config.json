@@ -3,13 +3,6 @@
   "include-component-in-tag": false,
   "packages": {
     ".": {
-      "extra-files": [
-        {
-          "type": "json",
-          "path": "addon/config.json",
-          "jsonpath": "$.version"
-        }
-      ]
     }
   }
 }
