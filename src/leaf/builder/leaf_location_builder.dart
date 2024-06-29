@@ -15,4 +15,7 @@ class LocationInfoBuilder extends BuilderBase {
 
   LocationInfoBuilder _withInfo(String infoName, dynamic value) =>
       LocationInfoBuilder._withInfo(addInfo(infoName, value));
+
+  LocationInfoBuilder withCoordinates(dynamic latitude, dynamic longitude) =>
+    _withInfo('coordinates', latitude + ',' + longitude);
 }
