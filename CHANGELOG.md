@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.0](https://github.com/kamiKAC/leaf2mqtt/compare/v0.0.4...v0.1.0) (2024-06-30)
+
+
+### Features
+
+* add coordinates as combined latitude and longitude ([8bfd08a](https://github.com/kamiKAC/leaf2mqtt/commit/8bfd08a3e451ec79bdf5c2f845a6518fef54bb5e))
+* provide combined coordinates which are supported by openHAB ([#30](https://github.com/kamiKAC/leaf2mqtt/issues/30)) ([8bfd08a](https://github.com/kamiKAC/leaf2mqtt/commit/8bfd08a3e451ec79bdf5c2f845a6518fef54bb5e))
+
 ## [0.0.4](https://github.com/kamiKAC/leaf2mqtt/compare/v0.0.3...v0.0.4) (2024-06-16)
 
 

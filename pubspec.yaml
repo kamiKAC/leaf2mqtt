@@ -1,5 +1,5 @@
 name: leaf2mqtt
-version: 0.0.4
+version: 0.1.0
 publish_to: 'none'
 dependencies:
   dartnissanconnectna:
