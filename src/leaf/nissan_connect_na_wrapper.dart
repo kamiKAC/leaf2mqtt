@@ -111,6 +111,7 @@ class NissanConnectNAVehicleWrapper extends VehicleInternal {
     return saveAndPrependVin(LocationInfoBuilder()
       .withLatitude(location.latitude)
       .withLongitude(location.longitude)
+      .withCoordinates(location.latitude, location.longitude)
       .build());
   }
 

@@ -181,6 +181,7 @@ In these examples, the `MQTT_BASE_TOPIC` is set to the default (`leaf`).
 | ------ | ---- | ----------- |
 | leaf/{vin}/location/latitude | String | The reported last known location's latitude in decimal degrees |
 | leaf/{vin}/location/longitude | String | The reported last known location's longitude in decimal degrees |
+| leaf/{vin}/location/coordinates | String | The reported last known location (combined latitude and longitude in decimal degrees) |
 | leaf/{vin}/location/lastReceivedDateTimeUtc | Iso8601 UTC | The datetime when leaf2mqtt received the last location values |
 | leaf/{vin}/location/json | String | A json representation of all location status |
 
@@ -267,6 +268,9 @@ In Home Assistant, calling a script like this `- service: script.some_script_nam
                 timeout: 600
         # Let's have a cool down to give time to Home Assistant to update all the states.
         - delay: "00:00:10"
+
+## OpenHAB integration
+Once you configure and start application you can configure OpenHAB to get data for your Leaf. Example config file is [here](/openhab) and documentation is [here](/openhab/README.md)
 
 ## Credits
 - Forked from [Troon/leaf2mqtt](https://github.com/Troon/leaf2mqtt). Thank you for the inspiration!

@@ -1,0 +1,34 @@
+Bridge mqtt:broker:mosquitto "Mosquitto" [ host="localhost", secure=false, clientID="openHAB" ]
+
+Thing mqtt:topic:leaf "Leaf" (mqtt:broker:mosquitto){
+    Channels:
+        /* Leaf Command Things */
+        Type string : StatusUpdate						[ commandTopic="leaf/command" ]
+        Type string : StatusBatteryUpdate				[ commandTopic="leaf/command/battery" ]
+        Type string : LocationUpdate				    [ commandTopic="leaf/command/location" ]
+        Type string : DailyStatistics                   [ commandTopic="leaf/command/stats/daily" ]
+
+        /* Leaf Status Things */
+        Type datetime : StatsDate                       [ stateTopic="leaf/stats/daily/targetDate", transformationPattern="JS:FormatDate.js" ]
+        Type string   : StatsTravelHours                [ stateTopic="leaf/stats/daily/travelTimeHours" ]
+        Type number   : StatsTravelDistance             [ stateTopic="leaf/stats/daily/travelDistanceKilometers" ]
+        Type number   : StatsKmPerKwh                   [ stateTopic="leaf/stats/daily/kilometersPerKwh" ]
+        Type number   : StatsKwhUsed		            [ stateTopic="leaf/stats/daily/kwhUsed" ]
+        Type number   : StatsCO2Reduction               [ stateTopic="leaf/stats/daily/co2ReductionKg" ]
+        Type number   : StatsTripsNumber                [ stateTopic="leaf/stats/daily/tripsNumber" ]
+        Type number   : StatsKwhGained                  [ stateTopic="leaf/stats/daily/kWhGained" ]
+        Type datetime : StatsLastReported               [ stateTopic="leaf/stats/daily/lastReceivedDateTimeUtc" ]
+        Type number   : BatPercent                  	[ stateTopic="leaf/battery/percentage" ]
+        Type switch   : BatConnected                    [ stateTopic="leaf/battery/connected", on=true, off=false ]
+        Type switch   : BatCharging                     [ stateTopic="leaf/battery/charging", on=true, off=false ]
+        Type string   : BatChargingSpeed                [ stateTopic="leaf/battery/chargingSpeed" ]
+        Type number   : BatRangeACOff                   [ stateTopic="leaf/battery/cruisingRangeAcOffKm" ]
+        Type number   : BatRangeACOn                    [ stateTopic="leaf/battery/cruisingRangeAcOnKm" ]
+        Type string   : TimeToFull1kW                   [ stateTopic="leaf/battery/timeToFullTrickleInMinutes" ]
+        Type string   : TimeToFull3kW                   [ stateTopic="leaf/battery/timeToFullL2InMinutes" ]
+        Type string   : TimeToFull6kW                   [ stateTopic="leaf/battery/timeToFullL2_6kwInMinutes" ]
+		Type datetime : BatLastReported                 [ stateTopic="leaf/battery/lastUpdatedDateTimeUtc", transformationPattern="JS:FormatDate.js" ]
+        Type number   : Mileage                         [ stateTopic="leaf/cockpitStatus/totalMileage" ]
+		Type string	  : Coordinates						[ stateTopic="leaf/location/coordinates" ]
+		Type datetime : LocationLastReported            [ stateTopic="leaf/location/lastReceivedDateTimeUtc", transformationPattern="JS:FormatDate.js" ]
+}

@@ -5,7 +5,7 @@ on:
     inputs: 
       tag:
         type: string
-        description: Set tag for docker image
+        description: Set tag for docker image if workflow not started from main
         default: ""
         required: false
         
@@ -112,9 +112,9 @@ jobs:
         with:
           images: ${{ secrets.DOCKERHUBUSERNAME }}/leaf2mqtt
           tags: |
-            type=raw,value=${{ needs.release-please.outputs.tag_name == '' && inputs.tag || needs.release-please.outputs.tag_name }},enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
+            type=raw,value=${{ needs.release-please.outputs.tag_name }},enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
             type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
-            type=raw,value=${{ steps.get-nearest-tag.outputs.nearest_tag  }},enable=${{ github.ref != format('refs/heads/{0}', 'main') }}
+            type=raw,value=${{ inputs.tag != '' && inputs.tag || steps.get-nearest-tag.outputs.nearest_tag  }},enable=${{ github.ref != format('refs/heads/{0}', 'main') }}
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
