@@ -1,0 +1,28 @@
+Group           OF_Car					"Nissan Leaf"           		<car>       (OF) ["Car"]
+
+tring			Car_Update				"Update"					    <car>	(OF_Car) ["Control"] { listWidget="oh-list-item"[actionItem="Car_Update", action="command" ,actionCommand="update", icon="f7:rectangle_split_3x1_fill"], channel="mqtt:topic:leaf:StatusUpdate" }
+String			Car_BatteryUpdate		"Update battery state"		    <car>	(OF_Car) ["Control"] { listWidget="oh-list-item"[actionItem="Car_BatteryUpdate", action="command", actionCommand="update", icon="f7:rectangle_split_3x1_fill"], channel="mqtt:topic:leaf:StatusBatteryUpdate" }
+String			Car_LocationUpdate		"Update location"		        <car>	(OF_Car) ["Control"] { listWidget="oh-list-item"[actionItem="Car_LocationUpdate", action="command", actionCommand="update", icon="f7:rectangle_split_3x1_fill"], channel="mqtt:topic:leaf:LocationUpdate" }
+String          Car_StatsUpdate         "Update daily statistics"		        <car>	(OF_Car) ["Control"] { listWidget="oh-list-item"[actionItem="Car_StatsUpdate", action="command", actionCommand="='update ' + dayjs().format('YYYY-MM-DD HH:mm:ss')", icon="f7:rectangle_split_3x1_fill"], channel="mqtt:topic:leaf:DailyStatistics" }
+
+DateTime		Car_StatsDate   		"Trip statistics for [%1$td-%1$tm-%1$ty]" <time> (OF_Car) ["Status"] { channel="mqtt:topic:leaf:StatsDate", autoupdate="false" }
+Number:Length	Car_Odometer			"Odometer [%dkm]"					<distance> (OF_Car) ["Measurement"] { channel="mqtt:topic:leaf:Mileage", unit="km", autoupdate="false" }
+Number:Time     Car_TripHours           "Travel hours [%dh]"             <time> (OF_Car) ["Measurement"] {  channel="mqtt:topic:leaf:StatsTravelHours" }
+Number:Time     Car_TripDistance        "Travel distance [%dkm]"         <distance>   (OF_Car) ["Measurement"] {  channel="mqtt:topic:leaf:StatsTravelDistance" }
+Number          Car_TripNumber          "Trip number [%d]"             <car>   (OF_Car) ["Measurement"] {  channel="mqtt:topic:leaf:StatsTripsNumber" }
+Number          Car_KmPerKwh            "Distance per kWh [%.1f km/kWh]"             <car>   (OF_Car) ["Measurement"] {  channel="mqtt:topic:leaf:StatsKmPerKwh" }
+Number:Energy   Car_TripKwh             "Consumption [%.1fkWh]"         <car>   (OF_Car) ["Measurement"] {  channel="mqtt:topic:leaf:StatsKwhUsed" }
+Number:Energy   Car_KwhGained           "Recovered energy [%.1fkWh]"       <car>   (OF_Car) ["Measurement"] {  channel="mqtt:topic:leaf:StatsKwhGained" }
+DateTime		Car_StatsReceiveTime	"Statistics last received [%1$td-%1$tm-%1$ty %1$tH:%1$tM:%1$tS]" <time> (OF_Car) ["Status"] { channel="mqtt:topic:leaf:StatsLastReported", autoupdate="false" }
+Number          Car_BatPercent          "Battery level [%d%%]"               (OF_Car) ["Status"] { channel="mqtt:topic:leaf:BatPercent", autoupdate="false" }
+Switch			Car_BatConnected		"Battery connected"			    <battery>	(OF_Car) ["Measurement"] { channel="mqtt:topic:leaf:BatConnected", stateDescription=""[readOnly="true"] }
+Switch			Car_BatCharging		    "Battery charging"			        <battery>	(OF_Car) ["Measurement"] { channel="mqtt:topic:leaf:BatCharging", stateDescription=""[readOnly="true"] }
+String          CarBatChargingSpeed     "Battery charging speed [%s]"           <battery>	(OF_Car) ["Measurement"] { channel="mqtt:topic:leaf:BatChargingSpeed" }
+Number:Length	Car_RangeACOff			"Range without AC [%dkm]"			<distance> (OF_Car) ["Measurement"] { channel="mqtt:topic:leaf:BatRangeACOff", unit="km", autoupdate="false" }
+Number:Length	Car_RangeACOn			"Range with AC [%dkm]"				<distance> (OF_Car) ["Measurement"] { channel="mqtt:topic:leaf:BatRangeACOn", unit="km", autoupdate="false" }
+String          Car_TimeToFull1kW       "Time to full 1kW [%t]"           <time> (OF_Car) ["Measurement"] { channel="mqtt:topic:leaf:TimeToFull1kW", unit="h", autoupdate="false" }
+String          Car_TimeToFull3kW       "Time to full 3kW [%t]"           <time> (OF_Car) ["Measurement"] { channel="mqtt:topic:leaf:TimeToFull3kW", unit="h", autoupdate="false" }
+String          Car_TimeToFull6kW       "Time to full 6kW [%t]"           <time> (OF_Car) ["Measurement"] { channel="mqtt:topic:leaf:TimeToFull6kW", unit="h", autoupdate="false" }
+DateTime		Car_BatLastReported     "Battery statistics last received [%1$td-%1$tm-%1$ty %1$tH:%1$tM:%1$tS]" <time> (OF_Car) ["Status"] { channel="mqtt:topic:leaf:BatLastReported", autoupdate="false" }
+Location		Car_Location			"Car Location [%s]"				<location> (OF_Car) ["Status"] { channel="mqtt:topic:leaf:Coordinates", autoupdate="false" }
+DateTime		Car_LocationLastReported "Car location last received [%1$td-%1$tm-%1$ty %1$tH:%1$tM:%1$tS]" <time> (OF_Car) ["Status"] { channel="mqtt:topic:leaf:LocationLastReported", autoupdate="false" }
