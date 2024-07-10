@@ -9,11 +9,6 @@ import 'leaf_session.dart';
 import 'leaf_vehicle.dart';
 
 final Logger _log = Logger('NissanConnectNASessionWrapper');
-bool debug = false;
-if ((_log.level <= Level.SHOUT && _log.level >= Level.SEVERE) || _log.level == Level.ALL) {
-  _log.info ('Log level is ${_log.level.name} - session library will provide debug output');
-  debug = true;
-}
 
 class NissanConnectNASessionWrapper extends LeafSessionInternal {
   NissanConnectNASessionWrapper(this._countryCode, String username, String password)
@@ -24,6 +19,11 @@ class NissanConnectNASessionWrapper extends LeafSessionInternal {
 
   @override
   Future<void> login() async {
+    bool debug = false;
+    if ((_log.level <= Level.SHOUT && _log.level >= Level.SEVERE) || _log.level == Level.ALL) {
+      _log.info ('Log level is ${_log.level.name} - session library will provide debug output');
+      debug = true;
+    }
     _session = NissanConnectSession(debug: debug);
     const String fakeAndroidUserAgent = 'Dalvik/2.1.0 (Linux; U; Android 5.1.1; Android SDK built for x86 Build/LMY48X)';
     await _session.login(username: username, password: password, countryCode: _countryCode, userAgent: fakeAndroidUserAgent);

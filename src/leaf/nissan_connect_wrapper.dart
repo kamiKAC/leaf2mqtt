@@ -11,11 +11,6 @@ import 'leaf_session.dart';
 import 'leaf_vehicle.dart';
 
 final Logger _log = Logger('NissanConnectSessionWrapper');
-bool debug = false;
-if ((_log.level <= Level.SHOUT && _log.level >= Level.SEVERE) || _log.level == Level.ALL) {
-  _log.info ('Log level is ${_log.level.name} - session library will provide debug output');
-  debug = true;
-}
 
 class NissanConnectSessionWrapper extends LeafSessionInternal {
   NissanConnectSessionWrapper(String username, String password)
@@ -25,6 +20,11 @@ class NissanConnectSessionWrapper extends LeafSessionInternal {
 
   @override
   Future<void> login() async {
+    bool debug = false;
+    if ((_log.level <= Level.SHOUT && _log.level >= Level.SEVERE) || _log.level == Level.ALL) {
+      _log.info ('Log level is ${_log.level.name} - session library will provide debug output');
+      debug = true;
+    }
     _session = NissanConnectSession(debug: debug);
     await _session.login(username: username, password: password);
 

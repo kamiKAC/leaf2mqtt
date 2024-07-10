@@ -9,11 +9,6 @@ import 'leaf_session.dart';
 import 'leaf_vehicle.dart';
 
 final Logger _log = Logger('CarwingsSessionWrapper');
-bool debug = false;
-if ((_log.level <= Level.SHOUT && _log.level >= Level.SEVERE) || _log.level == Level.ALL) {
-  _log.info ('Log level is ${_log.level.name} - session library will provide debug output');
-  debug = true;
-}
 
 class CarwingsWrapper extends LeafSessionInternal {
   CarwingsWrapper(this._region, String username, String password)
@@ -25,6 +20,11 @@ class CarwingsWrapper extends LeafSessionInternal {
 
   @override
   Future<void> login() async {
+    bool debug = false;
+    if ((_log.level <= Level.SHOUT && _log.level >= Level.SEVERE) || _log.level == Level.ALL) {
+      _log.info ('Log level is ${_log.level.name} - session library will provide debug output');
+      debug = true;
+    }
     _session = CarwingsSession(debug: debug);
     await _session.login(username: username, password: password, region: _region);
 
