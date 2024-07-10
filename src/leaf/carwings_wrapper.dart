@@ -9,9 +9,9 @@ import 'leaf_session.dart';
 import 'leaf_vehicle.dart';
 
 final Logger _log = Logger('CarwingsSessionWrapper');
-int debug = false;
-if ((Logger.root.level <= Level.SHOUT && Logger.root.level >= Level.SEVERE) || Logger.root.level == Level.ALL) {
-  _log.info ('Log level is ${Logger.root.level.name} - session library will provide debug output')
+bool debug = false;
+if ((_log.root.level <= Level.SHOUT && _log.root.level >= Level.SEVERE) || _log.root.level == Level.ALL) {
+  _log.info ('Log level is ${_log.root.level.name} - session library will provide debug output')
   debug = true;
 }
 
