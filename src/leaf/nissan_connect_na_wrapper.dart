@@ -22,6 +22,9 @@ class NissanConnectNASessionWrapper extends LeafSessionInternal {
     bool debug = false;
     if ((_log.level <= Level.SHOUT && _log.level >= Level.SEVERE) || _log.level == Level.ALL) {
       _log.info ('Log level is ${_log.level.name} - session library will provide debug output');
+      print = (Object? object) {
+        _log.SEVERE(object?.toString());
+      };
       debug = true;
     }
     _session = NissanConnectSession(debug: debug);
