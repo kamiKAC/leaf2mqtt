@@ -11,6 +11,11 @@ import 'leaf_session.dart';
 import 'leaf_vehicle.dart';
 
 final Logger _log = Logger('NissanConnectSessionWrapper');
+int debug = false;
+if ((Logger.root.level <= Level.SHOUT && Logger.root.level >= Level.SEVERE) || Logger.root.level == Level.ALL) {
+  _log.info ('Log level is ${Logger.root.level.name} - session library will provide debug output')
+  debug = true;
+}
 
 class NissanConnectSessionWrapper extends LeafSessionInternal {
   NissanConnectSessionWrapper(String username, String password)
