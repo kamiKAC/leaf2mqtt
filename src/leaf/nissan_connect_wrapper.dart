@@ -12,8 +12,8 @@ import 'leaf_vehicle.dart';
 
 final Logger _log = Logger('NissanConnectSessionWrapper');
 bool debug = false;
-if ((_log.root.level <= Level.SHOUT && _log.root.level >= Level.SEVERE) || _log.root.level == Level.ALL) {
-  _log.info ('Log level is ${_log.root.level.name} - session library will provide debug output')
+if ((_log.level <= Level.SHOUT && _log.level >= Level.SEVERE) || _log.level == Level.ALL) {
+  _log.info ('Log level is ${_log.level.name} - session library will provide debug output');
   debug = true;
 }
 
