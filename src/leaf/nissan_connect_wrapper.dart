@@ -1,5 +1,6 @@
 import 'package:dartnissanconnect/dartnissanconnect.dart';
 import 'package:dartnissanconnect/src/nissanconnect_hvac.dart';
+import 'package:logging/logging.dart';
 
 import 'builder/leaf_battery_builder.dart';
 import 'builder/leaf_climate_builder.dart';
@@ -9,6 +10,8 @@ import 'builder/leaf_stats_builder.dart';
 import 'leaf_session.dart';
 import 'leaf_vehicle.dart';
 
+final Logger _log = Logger('NissanConnectSessionWrapper');
+
 class NissanConnectSessionWrapper extends LeafSessionInternal {
   NissanConnectSessionWrapper(String username, String password)
     : super(username, password);
@@ -17,7 +20,7 @@ class NissanConnectSessionWrapper extends LeafSessionInternal {
 
   @override
   Future<void> login() async {
-    _session = NissanConnectSession();
+    _session = NissanConnectSession(debug: debug);
     await _session.login(username: username, password: password);
 
     final List<VehicleInternal> newVvehicles = _session.vehicles.map((NissanConnectVehicle vehicle) =>

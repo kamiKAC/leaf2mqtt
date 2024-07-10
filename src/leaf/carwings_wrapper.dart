@@ -1,4 +1,5 @@
 import 'package:dartcarwings/dartcarwings.dart';
+import 'package:logging/logging.dart';
 
 import 'builder/leaf_battery_builder.dart';
 import 'builder/leaf_climate_builder.dart';
@@ -6,6 +7,8 @@ import 'builder/leaf_location_builder.dart';
 import 'builder/leaf_stats_builder.dart';
 import 'leaf_session.dart';
 import 'leaf_vehicle.dart';
+
+final Logger _log = Logger('CarwingsSessionWrapper');
 
 class CarwingsWrapper extends LeafSessionInternal {
   CarwingsWrapper(this._region, String username, String password)
@@ -17,7 +20,7 @@ class CarwingsWrapper extends LeafSessionInternal {
 
   @override
   Future<void> login() async {
-    _session = CarwingsSession();
+    _session = CarwingsSession(debug: debug);
     await _session.login(username: username, password: password, region: _region);
 
     final List<VehicleInternal> newVehicles = _session.vehicles.map((CarwingsVehicle vehicle) =>

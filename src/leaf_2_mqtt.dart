@@ -12,6 +12,7 @@ int _commandAttempts = 2;
 const appVersion = String.fromEnvironment('APP_VERSION', defaultValue: 'unknown');
 
 final Logger _log = Logger('main');
+bool debug = false;
 
 Future<void> main() async {
   final Map<String, String> envVars = Platform.environment;
@@ -33,6 +34,11 @@ Future<void> main() async {
   });
 
   _log.info('Version: ${appVersion}');
+
+  if ((Logger.root.level <= Level.SHOUT && Logger.root.level => Level.SEVERE) || Logger.root.level = Level.ALL) {
+    _log.info ('Log level is ${Level.name} - session library will provide debug output')
+    debug = true;
+  }
 
   final String leafUser = envVars['LEAF_USERNAME'];
   final String leafPassword = envVars['LEAF_PASSWORD'];
