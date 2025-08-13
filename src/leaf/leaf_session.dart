@@ -21,30 +21,25 @@ LeafSession createLeafSession(LeafType leafType, String username, String passwor
   switch (leafType) {
     case LeafType.newerThanMay2019:
       return NissanConnectSessionWrapper(username, password);
-      break;
 
     case LeafType.olderCanada:
       return NissanConnectNASessionWrapper('CA', username, password);
-      break;
 
     case LeafType.olderUsa:
       return NissanConnectNASessionWrapper('US', username, password);
-      break;
 
     case LeafType.olderEurope:
       return CarwingsWrapper(CarwingsRegion.Europe, username, password);
-      break;
 
     case LeafType.olderJapan:
       return CarwingsWrapper(CarwingsRegion.Japan, username, password);
-      break;
 
     case LeafType.olderAustralia:
       return CarwingsWrapper(CarwingsRegion.Australia, username, password);
-      break;
 
     default:
-      throw ArgumentError.value(leafType, 'leafType', 'this LeafType is not supported yet.');
+      throw ArgumentError.value(
+          leafType, 'leafType', 'this LeafType is not supported yet.');
   }
 }
 
@@ -62,9 +57,13 @@ abstract class LeafSessionInternal extends LeafSession {
   void setVehicles(List<VehicleInternal> newVehicles) {
     // keep the last states
     for (final VehicleInternal lastKnownVehicle in _lastKnownVehicles) {
-      final VehicleInternal matchingVehicle =
-        newVehicles.firstWhere((VehicleInternal vehicle) => vehicle.vin == lastKnownVehicle.vin, orElse: () => null);
-      matchingVehicle?.setLastKnownStatus(lastKnownVehicle);
+      try {
+        final VehicleInternal matchingVehicle = newVehicles.firstWhere(
+            (VehicleInternal vehicle) => vehicle.vin == lastKnownVehicle.vin);
+        matchingVehicle.setLastKnownStatus(lastKnownVehicle);
+      } catch (e) {
+        // vehicle did not exist in the new list of vehicles
+      }
     }
 
     _lastKnownVehicles = newVehicles;
@@ -73,65 +72,67 @@ abstract class LeafSessionInternal extends LeafSession {
   @override
   Map<String, String> getAllLastKnownStatus() =>
       _lastKnownVehicles.fold(<String, String>{},
-      (Map<String, String> allLastKnownStatus, VehicleInternal vehicle) {
+          (Map<String, String> allLastKnownStatus, VehicleInternal vehicle) {
         allLastKnownStatus.addAll(vehicle.getLastKnownStatus());
         return allLastKnownStatus;
-      } );
+      });
 }
 
-  /// The client Connect callback type
+/// The client Connect callback type
 typedef ExecutionErrorCallback = void Function(String vin);
 typedef ExecutableVehicleActionHandler<T> = Future<T> Function(Vehicle vehicle);
 typedef SyncExecutableVehicleActionHandler<T> = T Function(Vehicle vehicle);
-abstract class LeafSession {
 
-  ExecutionErrorCallback onExecutionError;
+abstract class LeafSession {
+  ExecutionErrorCallback? onExecutionError;
 
   List<Vehicle> get vehicles;
 
-   Vehicle _getVehicle(String vin) =>
-    vehicles.firstWhere((Vehicle vehicle) => vehicle.vin == vin,
-                        orElse: () => throw Exception('Vehicle $vin not found.'));
+  Vehicle _getVehicle(String vin) => vehicles.firstWhere(
+      (Vehicle vehicle) => vehicle.vin == vin,
+      orElse: () => throw Exception('Vehicle $vin not found.'));
 
   Future<void> login();
 
   Map<String, String> getAllLastKnownStatus();
 
-  T executeSync<T>(SyncExecutableVehicleActionHandler<T> executable, String vin) {
-      try {
-        return executable(_getVehicle(vin));
-      } catch (e, stackTrace) {
-        _logException(e, stackTrace);
-      }
+  T? executeSync<T>(SyncExecutableVehicleActionHandler<T> executable, String vin) {
+    try {
+      return executable(_getVehicle(vin));
+    } catch (e, stackTrace) {
+      _logException(e, stackTrace);
+    }
 
-      return null;
+    return null;
   }
 
-  Future<void> executeCommandWithRetry(ExecutableVehicleActionHandler<bool> executable, String vin, int commandAttempts) async {
+  Future<void> executeCommandWithRetry(
+      ExecutableVehicleActionHandler<bool> executable,
+      String vin,
+      int commandAttempts) async {
     bool anyCommandSucceeded = false;
     for (int attempts = 0; attempts < commandAttempts; ++attempts) {
       try {
         anyCommandSucceeded |= await _executeWithRetry((Vehicle vehicle) async {
           return await executable(vehicle);
         }, vin);
-      } catch(e, stackTrace) {
+      } catch (e, stackTrace) {
         _logException(e, stackTrace);
       }
     }
 
-    if (!anyCommandSucceeded && onExecutionError != null) {
-        onExecutionError(vin);
-      }
+    if (!anyCommandSucceeded) {
+      onExecutionError?.call(vin);
+    }
   }
 
-  Future<T> executeWithRetry<T>(ExecutableVehicleActionHandler<T> executable, String vin) async {
+  Future<T?> executeWithRetry<T>(
+      ExecutableVehicleActionHandler<T> executable, String vin) async {
     try {
       return await _executeWithRetry(executable, vin);
-    } catch(e, stackTrace) {
+    } catch (e, stackTrace) {
       _logException(e, stackTrace);
-      if (onExecutionError != null) {
-        onExecutionError(vin);
-      }
+      onExecutionError?.call(vin);
     }
 
     return null;

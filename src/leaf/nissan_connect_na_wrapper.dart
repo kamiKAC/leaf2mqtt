@@ -14,17 +14,24 @@ class NissanConnectNASessionWrapper extends LeafSessionInternal {
   NissanConnectNASessionWrapper(this._countryCode, String username, String password)
     : super(username, password);
 
-  NissanConnectSession _session;
+  late NissanConnectSession _session;
   final String _countryCode;
 
   @override
   Future<void> login() async {
     _session = NissanConnectSession(debug: _log.level <= Level.FINER);
-    const String fakeAndroidUserAgent = 'Dalvik/2.1.0 (Linux; U; Android 5.1.1; Android SDK built for x86 Build/LMY48X)';
-    await _session.login(username: username, password: password, countryCode: _countryCode, userAgent: fakeAndroidUserAgent);
+    const String fakeAndroidUserAgent =
+        'Dalvik/2.1.0 (Linux; U; Android 5.1.1; Android SDK built for x86 Build/LMY48X)';
+    await _session.login(
+        username: username,
+        password: password,
+        countryCode: _countryCode,
+        userAgent: fakeAndroidUserAgent);
 
-    final List<VehicleInternal> newVehicles = _session.vehicles.map((NissanConnectVehicle vehicle) =>
-      NissanConnectNAVehicleWrapper(vehicle)).toList();
+    final List<VehicleInternal> newVehicles = _session.vehicles
+        .map((NissanConnectVehicle vehicle) =>
+            NissanConnectNAVehicleWrapper(vehicle))
+        .toList();
 
     setVehicles(newVehicles);
   }
@@ -92,10 +99,9 @@ class NissanConnectNAVehicleWrapper extends VehicleInternal {
 
   @override
   Future<Map<String, String>> fetchClimateStatus() =>
-    Future<Map<String, String>>.value(
-      saveAndPrependVin(ClimateInfoBuilder()
-        .withCabinTemperatureCelsius(_getVehicle().incTemperature)
-        .build()));
+      Future<Map<String, String>>.value(saveAndPrependVin(ClimateInfoBuilder()
+          .withCabinTemperatureCelsius(_getVehicle().incTemperature ?? 0.0)
+          .build()));
 
   @override
   Future<bool> startClimate(int targetTemperatureCelsius) =>

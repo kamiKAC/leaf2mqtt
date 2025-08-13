@@ -13,15 +13,17 @@ class NissanConnectSessionWrapper extends LeafSessionInternal {
   NissanConnectSessionWrapper(String username, String password)
     : super(username, password);
 
-  NissanConnectSession _session;
+  late NissanConnectSession _session;
 
   @override
   Future<void> login() async {
     _session = NissanConnectSession();
     await _session.login(username: username, password: password);
 
-    final List<VehicleInternal> newVvehicles = _session.vehicles.map((NissanConnectVehicle vehicle) =>
-      NissanConnectVehicleWrapper(vehicle)).toList();
+    final List<VehicleInternal> newVvehicles = _session.vehicles
+        .map((NissanConnectVehicle vehicle) =>
+            NissanConnectVehicleWrapper(vehicle))
+        .toList();
 
     setVehicles(newVvehicles);
   }
@@ -68,25 +70,28 @@ class NissanConnectVehicleWrapper extends VehicleInternal {
   Future<Map<String, String>> fetchBatteryStatus() async {
     await _getVehicle().requestBatteryStatusRefresh();
 
-    final NissanConnectBattery battery = await _getVehicle().requestBatteryStatus();
+    final NissanConnectBattery battery =
+        await _getVehicle().requestBatteryStatus();
 
     final int percentage =
-      double.tryParse(battery.batteryPercentage.replaceFirst('%', ''))?.round();
+        double.tryParse(battery.batteryPercentage.replaceFirst('%', ''))
+                ?.round() ??
+            -1;
 
     return saveAndPrependVin(BatteryInfoBuilder()
-           .withChargePercentage(percentage ?? -1)
-           .withConnectedStatus(battery.isConnected)
-           .withChargingStatus(battery.isCharging)
-           .withCruisingRangeAcOffKm(battery.cruisingRangeAcOffKm)
-           .withCruisingRangeAcOffMiles(battery.cruisingRangeAcOffMiles)
-           .withCruisingRangeAcOnKm(battery.cruisingRangeAcOnKm)
-           .withCruisingRangeAcOnMiles(battery.cruisingRangeAcOnMiles)
-           .withLastUpdatedDateTime(battery.dateTime)
-           .withTimeToFullL2(battery.timeToFullNormal)
-           .withTimeToFullL2_6kw(battery.timeToFullFast)
-           .withTimeToFullTrickle(battery.timeToFullSlow)
-           .withChargingSpeed(battery.chargingSpeed.toString())
-           .build());
+        .withChargePercentage(percentage)
+        .withConnectedStatus(battery.isConnected)
+        .withChargingStatus(battery.isCharging)
+        .withCruisingRangeAcOffKm(battery.cruisingRangeAcOffKm)
+        .withCruisingRangeAcOffMiles(battery.cruisingRangeAcOffMiles)
+        .withCruisingRangeAcOnKm(battery.cruisingRangeAcOnKm)
+        .withCruisingRangeAcOnMiles(battery.cruisingRangeAcOnMiles)
+        .withLastUpdatedDateTime(battery.dateTime)
+        .withTimeToFullL2(battery.timeToFullNormal)
+        .withTimeToFullL2_6kw(battery.timeToFullFast)
+        .withTimeToFullTrickle(battery.timeToFullSlow)
+        .withChargingSpeed(battery.chargingSpeed.toString())
+        .build());
   }
 
   @override

@@ -43,10 +43,14 @@ abstract class Vehicle {
   bool get isCharging =>
     _findValueOfKeyIn(_lastKnownStatus, 'charging') == 'true';
 
-  String _findValueOfKeyIn(Map<String, String> status, String key) {
-    return status.entries.firstWhere(
-             (MapEntry<String, String> status) =>
-               status.key.endsWith(key), orElse: () => null)?.value;
+  String? _findValueOfKeyIn(Map<String, String> status, String key) {
+    try {
+      return status.entries
+          .firstWhere((MapEntry<String, String> status) => status.key.endsWith(key))
+          .value;
+    } catch (e) {
+      return null;
+    }
   }
 
   final Map<String, String> _lastKnownStatus = <String, String>{};
@@ -54,8 +58,8 @@ abstract class Vehicle {
 
   Map<String, String> getVehicleStatus() {
     final Map<String, String> info = <String, String>{
-      'nickname': _lastKnownStatus['nickname'],
-      'vin': _lastKnownStatus['vin'],
+      'nickname': _lastKnownStatus['nickname'] ?? '',
+      'vin': _lastKnownStatus['vin'] ?? '',
     };
 
     info['json'] = json.encode(info);

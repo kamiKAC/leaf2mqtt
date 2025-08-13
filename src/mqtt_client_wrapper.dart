@@ -22,17 +22,18 @@ class MqttClientWrapper {
     _mqttClient.keepAlivePeriod = 60;
   }
 
-  MqttServerClient _mqttClient;
-  String _baseTopic;
+  late MqttServerClient _mqttClient;
+  late String _baseTopic;
   final AsciiPayloadConverter _converter = AsciiPayloadConverter();
 
-  final Map<String, List<PayloadReceivedhandler>> _payloadReceivedHandlers = <String, List<PayloadReceivedhandler>>{};
+  final Map<String, List<PayloadReceivedhandler>> _payloadReceivedHandlers =
+      <String, List<PayloadReceivedhandler>>{};
 
-  ConnectCallback onConnected;
+  ConnectCallback? onConnected;
 
-  DisconnectCallback onDisconnected;
+  DisconnectCallback? onDisconnected;
 
-  Future<void> connectWithRetry(String mqttUser, String mqttPassword) async {
+  Future<void> connectWithRetry(String? mqttUser, String? mqttPassword) async {
     _log.info('Connecting...');
     _mqttClient.onConnected = onConnected;
 
@@ -43,16 +44,20 @@ class MqttClientWrapper {
     bool connected = false;
     while (!connected) {
       try {
-        final MqttClientConnectionStatus connectionCode  = await _mqttClient.connect(mqttUser, mqttPassword);
-        _log.info('Mqtt connection code: ' + connectionCode.returnCode.toString());
-        connected = connectionCode.returnCode == MqttConnectReturnCode.connectionAccepted;
+        final MqttClientConnectionStatus? connectionCode =
+            await _mqttClient.connect(mqttUser, mqttPassword);
+        _log.info(
+            'Mqtt connection code: ${connectionCode?.returnCode.toString()}');
+        connected = connectionCode?.returnCode ==
+            MqttConnectReturnCode.connectionAccepted;
       } catch (e, stackTrace) {
-        _log.warning('An error occured while connecting to MQTT broker. Retrying in 5 seconds.');
+        _log.warning(
+            'An error occured while connecting to MQTT broker. Retrying in 5 seconds.');
         _log.info(e);
         _log.finest(stackTrace);
       }
 
-      if(connected){
+      if (connected) {
         _mqttClient.onDisconnected = () => connectWithRetry(mqttUser, mqttPassword);
       } else {
         await Future<void>.delayed(const Duration(seconds: 5));
@@ -64,20 +69,20 @@ class MqttClientWrapper {
     _log.info('Subscribing to command topics');
     _mqttClient.subscribe('$_baseTopic/command/#', MqttQos.exactlyOnce);
     _mqttClient.subscribe('$_baseTopic/+/command/#', MqttQos.exactlyOnce);
-    _mqttClient.updates.listen(_receiveData);
+    _mqttClient.updates?.listen(_receiveData);
   }
 
-  void subscribeTopic(String topic, PayloadReceivedhandler handler){
+  void subscribeTopic(String topic, PayloadReceivedhandler handler) {
     _log.fine('Subscribing to $topic');
     _payloadReceivedHandlers.update(
-      '$_baseTopic/$topic',
-      (List<PayloadReceivedhandler> handlers) { handlers.add(handler); return handlers; },
-      ifAbsent: () => <PayloadReceivedhandler> [handler]);
+        '$_baseTopic/$topic', (List<PayloadReceivedhandler> handlers) {
+      handlers.add(handler);
+      return handlers;
+    }, ifAbsent: () => <PayloadReceivedhandler>[handler]);
   }
 
   void publishMessage(String topic, String value) {
-    if (!(topic?.isEmpty ?? true) && !(value?.isEmpty ?? true) )
-    {
+    if (topic.isNotEmpty && value.isNotEmpty) {
       _log.finest('Publishing message $topic $value');
       try {
         _mqttClient.publishMessage(
